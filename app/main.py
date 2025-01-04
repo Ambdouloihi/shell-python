@@ -3,7 +3,7 @@ import sys
 import shutil
 import subprocess
 
-BUILTIN_CMD = {"exit", "echo", "type", "pwd"}
+BUILTIN_CMD = {"exit", "echo", "type", "pwd", "cd"}
 
 
 def type_cmd(command):
@@ -13,6 +13,13 @@ def type_cmd(command):
         print(f"{command} is {path}")
     else:
         print(f"{command}: not found")
+
+
+def cd_cmd(path):
+    try:
+        os.chdir(os.path.expanduser(path))
+    except OSError:
+        print(f"cd: {path}: No such file or directory")
 
 
 def main():
@@ -30,6 +37,8 @@ def main():
                 type_cmd(cmd)
             case ["pwd"]:
                 print(os.getcwd())
+            case ["cd", pth]:
+                cd_cmd(pth)
             case [cmd, *args] if shutil.which(cmd):
                 subprocess.run([cmd, *args])
             case _:
