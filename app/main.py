@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import subprocess
+import shlex
 
 BUILTIN_CMD = {"exit", "echo", "type", "pwd", "cd"}
 
@@ -28,7 +29,7 @@ def main():
 
         command = input()
 
-        match command.split():
+        match shlex.split(command):
             case ["exit", "0"]:
                 exit()
             case ["echo", *args]:
