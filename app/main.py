@@ -1,5 +1,14 @@
 import sys
 
+BUILTIN_CMD = {"exit", "echo", "type"}
+
+
+def type_cmd(command):
+    if command in BUILTIN_CMD:
+        print(f"{command} is a shell builtin")
+    else:
+        print(f"{command}: not found")
+
 
 def main():
     while True:
@@ -12,6 +21,8 @@ def main():
                 exit()
             case ["echo", *args]:
                 print(*args)
+            case ["type", cmd]:
+                type_cmd(cmd)
             case _:
                 print(f"{command}: command not found")
 
