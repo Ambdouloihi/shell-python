@@ -10,8 +10,8 @@ def main():
         match command.split():
             case ["exit", "0"]:
                 exit()
-            case cmd_args:
-                print(f"{cmd_args}: command not found")
+            case _:
+                print(f"{' '.join(command)}: command not found")
 
 
 if __name__ == "__main__":
