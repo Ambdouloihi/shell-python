@@ -10,6 +10,8 @@ def main():
         match command.split():
             case ["exit", "0"]:
                 exit()
+            case ["echo", *args]:
+                print(*args)
             case _:
                 print(f"{command}: command not found")
 
