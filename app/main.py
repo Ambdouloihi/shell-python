@@ -1,5 +1,6 @@
 import sys
 import shutil
+import subprocess
 
 BUILTIN_CMD = {"exit", "echo", "type"}
 
@@ -26,6 +27,8 @@ def main():
                 print(*args)
             case ["type", cmd]:
                 type_cmd(cmd)
+            case [cmd, *args] if shutil.which(cmd):
+                subprocess.run([cmd, *args])
             case _:
                 print(f"{command}: command not found")
 
