@@ -1,8 +1,9 @@
+import os
 import sys
 import shutil
 import subprocess
 
-BUILTIN_CMD = {"exit", "echo", "type"}
+BUILTIN_CMD = {"exit", "echo", "type", "pwd"}
 
 
 def type_cmd(command):
@@ -27,6 +28,8 @@ def main():
                 print(*args)
             case ["type", cmd]:
                 type_cmd(cmd)
+            case ["pwd"]:
+                print(os.getcwd())
             case [cmd, *args] if shutil.which(cmd):
                 subprocess.run([cmd, *args])
             case _:
