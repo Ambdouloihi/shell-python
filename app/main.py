@@ -7,16 +7,16 @@ import shlex
 BUILTIN_CMD = {"exit", "echo", "type", "pwd", "cd"}
 
 REDIRECTION_MODES = {
-    ">": ("w", True, None),
-    "1>": ("w", True, None),
-    ">>": ("a", True, None),
-    "1>>": ("a", True, None),
-    "2>": ("w", None, True),
-    "2>>": ("a", None, True),
+    ">": ("w", True, False),
+    "1>": ("w", True, False),
+    ">>": ("a", True, False),
+    "1>>": ("a", True, False),
+    "2>": ("w", False, True),
+    "2>>": ("a", False, True),
 }
 
 
-def type_cmd(command, stdout, stderr):
+def type_cmd(command, stdout=sys.stdout, stderr=sys.stderr):
     if command in BUILTIN_CMD:
         print(f"{command} is a shell builtin", file=stdout)
     elif path := shutil.which(command):
@@ -25,33 +25,31 @@ def type_cmd(command, stdout, stderr):
         print(f"{command}: not found", file=stderr)
 
 
-def cd_cmd(path, stderr):
+def cd_cmd(path, stderr=sys.stderr):
     try:
         os.chdir(os.path.expanduser(path))
     except OSError:
         print(f"cd: {path}: No such file or directory", file=stderr)
 
 
-def handle_cmd(cmd_args, stdout=None, stderr=None):
+def handle_cmd(cmd_args, stdout=sys.stdout, stderr=sys.stderr):
     match cmd_args:
         case ["exit", "0"]:
             exit()
         case ["echo", *args]:
-            print(*args, file=stdout or sys.stdout)
+            print(*args, file=stdout)
         case ["type", cmd]:
             type_cmd(cmd, stdout, stderr)
         case ["pwd"]:
-            print(os.getcwd(), file=stdout or sys.stdout)
+            print(os.getcwd(), file=stdout)
         case ["cd", pth]:
             cd_cmd(pth, stderr)
         case [cmd, *args] if shutil.which(cmd):
             process = run([cmd, *args], stdout=PIPE, stderr=PIPE, text=True)
-            if process.stdout:
-                print(process.stdout, file=stdout or sys.stdout, end="")
-            if process.stderr:
-                print(process.stderr, file=stderr or sys.stderr, end="")
+            print(process.stdout, file=stdout, end="")
+            print(process.stderr, file=stderr, end="")
         case _:
-            print(f"{' '.join(cmd_args)}: command not found", file=stderr or sys.stderr)
+            print(f"{' '.join(cmd_args)}: command not found", file=stderr)
 
 
 def main():
